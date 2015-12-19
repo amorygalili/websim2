@@ -5,7 +5,7 @@
         { "name": "Amory Galili", "email": "robotpy@googlegroups.com" },
         { "name": "Dustin Spicuzza", "email": "robotpy@googlegroups.com" }
     ],
-    "license": "BSD License",
+    "license": "MIT",
     "description": "RobotPy web-based low fidelity FRC robot simulation package",
     "dependencies": {
         "jquery": ">=1.7"
