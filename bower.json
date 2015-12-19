@@ -15,6 +15,7 @@
   "description": "RobotPy web-based low fidelity FRC robot simulation package",
   "dependencies": {
     "jquery": ">=1.7",
-    "bootstrap": "~3.3.6"
+    "bootstrap": "~3.3.6",
+    "lodash": "~3.10.1"
   }
 }
