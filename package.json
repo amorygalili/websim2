@@ -1,0 +1,9 @@
+{
+  "name": "robot-websim2",
+  "version": "1.0.0",
+  "scripts": {},
+  "dependencies": {
+    "grunt": "^0.4.5"
+  },
+  "devDependencies": {}
+}

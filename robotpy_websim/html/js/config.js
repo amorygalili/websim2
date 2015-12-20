@@ -3,21 +3,22 @@
  */
 (function(sim) {
 
-	var modules = {},
+	var templates = {},
 		savedGlobalData = {},
 		load = {};
 
 	function load() {
 		return Q($.GETJSON('/api/load')).then(function(data){
-			modules = data.modules;
+			templates = data.templates;
 			savedGlobalData = data.savedGlobalData;
 			savedUserData = data.savedUserData;
 		});
 	}
 
 	sim.config = {
-		// there are two minified files containing all the module css and javascript
-		// modules : { templates : [], css : '', js : ''}
+		// there are two minified files containing all the module css and javascript.
+		// The modules templates are gathered together by a grunt task and put in the templates.json file
+		// templates : { 'can' : { template1 : '<p></p>', template2 : 'sdfsdf'} }
 		templates : null,
 		savedGlobalData : null,
 		savedUserData : null,
