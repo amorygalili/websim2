@@ -16,6 +16,7 @@
   "dependencies": {
     "jquery": ">=1.7",
     "bootstrap": "~3.3.6",
-    "lodash": "~3.10.1"
+    "lodash": "~3.10.1",
+    "q": "~2.0.2"
   }
 }
