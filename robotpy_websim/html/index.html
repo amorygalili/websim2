@@ -3,13 +3,11 @@
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 		<title>FRC HTML Simulator Interface</title>
+		<link rel="stylesheet" href="/user/modules.min.css"/>
 	</head>
 	<body>
-
-		<!-- Trigger the modal with a button -->
-		<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#config-modal">Open Config</button>
 		<!-- Config Dialog -->
-		<div class="modal fade" id="config-modal">
+		<div class="modal fade config-modal" id="config-modal">
 			<div class="modal-dialog">
 			   	<div class="modal-content">
 				    <div class="modal-header">
@@ -30,19 +28,17 @@
 					   	</div>
 					    <div class="modal-footer">
 						    <button class="close-btn" type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
-						    <button class="apply-btn btn btn-primary btn-sm">Apply</button>
+						    <button class="save-btn btn btn-primary btn-sm">Save</button>
 					    </div>
 				    
 			   	</div>
 		  	</div>
 		</div>
 
-
-
-
-
-
-
+		<script src="user/templates.js"></script>
+		<script src="user/config.js"></script>
+		<script src="user/user-config.js"></script>
+		<script src="/user/modules.min.js"></script>
 
 
 	</body>

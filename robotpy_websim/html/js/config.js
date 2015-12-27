@@ -1,34 +1,35 @@
 /*
- * Config
+ *	Save conifg
  */
 (function(sim) {
 
-	var templates = {},
-		savedGlobalData = {},
-		load = {};
-
-	function load() {
-		return Q($.GETJSON('/api/load')).then(function(data){
-			templates = data.templates;
-			savedGlobalData = data.savedGlobalData;
-			savedUserData = data.savedUserData;
-		});
-	}
-
 	sim.config = {
-		// there are two minified files containing all the module css and javascript.
-		// The modules templates are gathered together by a grunt task and put in the templates.json file
-		// templates : { 'can' : { template1 : '<p></p>', template2 : 'sdfsdf'} }
-		templates : null,
-		savedGlobalData : null,
-		savedUserData : null,
-		load : null
+		data : window.config,
+		save : function() {
+			$.ajax({
+				type: 'POST',
+				url: '/api/config/save',
+				data: {
+					'config' : JSON.stringify(this.data)
+				}
+			});
+		}
+	};
 
-
+	sim.userConfig = {
+		data : window.userConfig,
+		save : function() {
+			$.ajax({
+				type: 'POST',
+				url: '/api/user_config/save',
+				data: {
+					'config' : JSON.stringify(this.data)
+				}
+			});
+		}
 	};
 
 })(window.sim = window.sim || {});
-
 
 /*
  *	Config Modal
@@ -39,12 +40,12 @@
 	var $cache = {
 		modal : $('#config-modal'),
 		openBtn : null,
-		closeBtn : null,
-		xBtn : null,
-		applyBtn : null,
+		closeBtn : $('#config-modal .modal-footer .close-btn'),
+		xBtn : $('#config-modal .modal-header .x-btn'),
+		saveBtn : $('#config-modal .modal-footer .save-btn'),
 		categoryTabs : $('#config-modal .config-categories'),
-		categories : [],
-		form : null,
+		categories : {},
+		form : $('#config-modal .config-form')
 	};
 
 	function getCurrentCategoryId() {
@@ -76,17 +77,34 @@
 		$cache.modal.trigger('categoryChange', [categoryId, $category]);
 	});
 
-	$cache.applyBtn.on('click', function(e) {
-		var currentCategoryId = getCurrentCategoryId();
-		var $category = $cache.categories[currentCategoryId];
-		$cache.modal.trigger('categorySave', [categoryId, $category]);
+	$cache.saveBtn.on('click', function(e) {
+		$cache.categories.forEach(function(category) {
+			sim.events.trigger('configModalSave', category, [category.inputs]);
+		});
+		sim.config.saveConfig();
+		sim.config.saveUserConfig();
+		$cache.modal.trigger('save');
 	});
 
 	sim.configModal = {
 		$el: $cache.modal,
 		$categories : $cache.categories,
-		addCategory : null,
-		removeCategory : null
+		addCategory : function($category) {
+			var categoryId = $category.data('category-id');
+			if(categoryId in $cache.categories) {
+				return false;
+			}
+			$cache.categories[categoryId] = {
+				tab : $('<li data-category-id="' + categoryId + '"></li>').appendTo($cache.categoryTabs),
+				inputs : $category.appendTo($cache.form)
+			};
+		},
+		removeCategory : function(categoryId) {
+			if(categoryId in $cache.categories) {
+				$cache.modal.find('[data-category-id]').remove();
+				delete $cache.categories[categoryId];
+			}
+		}
 	};
 
 })(window.sim = window.sim || {});
