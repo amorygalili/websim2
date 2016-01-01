@@ -22,7 +22,10 @@
 	}
 
 	Draggable.prototype.setPosition = function(x, y) {
-		
+		this.$el.css({
+			left : x,
+			top : y
+		});
 	};
 
 	Draggable.prototype.setOrder = function(x, y) {
@@ -71,6 +74,7 @@
 				});
 			}
 		}
+		
 	}).on('mouseup', function(e) {
 		beingDragged = null;
 	});

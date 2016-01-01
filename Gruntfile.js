@@ -1,6 +1,5 @@
 var _ = require('lodash'),
-	fs = require("fs"),
-	simPath = _.trimRight(grunt.option('simPath'), '/');
+	fs = require("fs");
 
 
 function isDirectory(path) {
@@ -21,16 +20,16 @@ function isDirectory(path) {
 	return true;
 }
 
-function getModulePaths() {
+function getModulePaths(simPath) {
 
 	// Get the folders containing the modules
-	var moduleParentPaths = ['robotpy_websim/html/modules/', simPath + '/modules/'];
+	var moduleParentPaths = ['robotpy_websim/html/modules/', simPath + 'modules/'];
 
 	// Get all the module paths
 	var modulePaths = {};
 
 	moduleParentPaths.forEach(function(moduleParentPath) {
-		var modules = fs.readdirSync(path);
+		var modules = fs.readdirSync(moduleParentPath);
 		modules.forEach(function(module) {
 			if(isDirectory(moduleParentPath + module)) {
 				modulePaths[module] = moduleParentPath + module;
@@ -43,7 +42,16 @@ function getModulePaths() {
 
 module.exports = function(grunt) {
 
-	var modulePaths = getModulePaths();
+	var simPath = _.trimRight(grunt.option('simPath'), '/') + '/',
+		modulePaths = getModulePaths(simPath),
+		uglifyFiles = {},
+		cssminFiles = {};
+
+		console.log(modulePaths);
+	
+	uglifyFiles[simPath + 'modules.min.js'] = _.map(modulePaths, function(path) { return path + '/*.js'; });
+	cssminFiles[simPath + 'modules.min.css'] = _.map(modulePaths, function(path) { return path + '/*.css'; });
+
 
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
@@ -52,9 +60,7 @@ module.exports = function(grunt) {
 		    	mangle: false
 		    },
 		    my_target: {
-		    	files: {
-		        	simPath + 'modules.min.js': _.map(modulePaths, function(path) { return path + 'js/*.js'; })
-		      	}
+		    	files: uglifyFiles
 		    }
 		},
 		cssmin: {
@@ -63,22 +69,23 @@ module.exports = function(grunt) {
 		    	roundingPrecision: -1
 		  	},
 		  	target: {
-		    	files: {
-		      		simPath + 'modules.min.css': _.map(modulePaths, function(path) { return path + 'css/*.css'; })
-		    	}
+		    	files: cssminFiles
 		  	}
 		}
 	});
-	grunt.loadNpmTasks('grunt-contrib-sass');
-	grunt.loadNpmTasks('grunt-contrib-watch');
+	
+	grunt.loadNpmTasks('grunt-contrib-cssmin');
+	grunt.loadNpmTasks('grunt-contrib-uglify');
 
 
 	grunt.registerTask('loadTemplates', 'Generates templates.json from the module html templates', function() {
 
 		// Get all the template paths
 		var templatePaths = {};
-		modulePaths.forEach(function(path, module) {
+
+		_.forEach(modulePaths, function(path, module) {
 			var templatePath = path + '/templates';
+
 			if(isDirectory(templatePath)) {
 				templatePaths[module] = templatePath;
 			}
@@ -86,7 +93,7 @@ module.exports = function(grunt) {
 
 		// Get all the template content
 		var templateContent = {};
-		templatePaths.forEach(function(path, module) {
+		_.forEach(templatePaths, function(path, module) {
 			templateContent[module] = {};
 			var templates = fs.readdirSync(path);
 			templates.forEach(function(template) {
